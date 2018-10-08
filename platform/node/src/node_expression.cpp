@@ -161,21 +161,21 @@ struct ToValue {
         std::vector<mbgl::Value> sections;
         for (const auto& section : formatted.sections) {
             std::unordered_map<std::string, mbgl::Value> serializedSection;
-            serializedSection["text"] = section.text;
+            serializedSection.emplace("text", section.text);
             if (section.fontScale) {
-                serializedSection["scale"] = *section.fontScale;
+                serializedSection.emplace("scale", *section.fontScale);
             } else {
-                serializedSection["scale"] = mbgl::NullValue();
+                serializedSection.emplace("scale", mbgl::NullValue());
             }
             if (section.fontStack) {
                 std::string fontStackString;
-                serializedSection["fontStack"] = mbgl::fontStackToString(*section.fontStack);
+                serializedSection.emplace("fontStack", mbgl::fontStackToString(*section.fontStack));
             } else {
-                serializedSection["fontStack"] = mbgl::NullValue();
+                serializedSection.emplace("fontStack", mbgl::NullValue());
             }
             sections.push_back(serializedSection);
         }
-        serialized["sections"] = sections;
+        serialized.emplace("sections", sections);
 
         return toJS(serialized);
     }
