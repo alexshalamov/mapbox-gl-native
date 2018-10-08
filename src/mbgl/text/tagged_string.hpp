@@ -1,11 +1,10 @@
 #pragma once
 
 #include <mbgl/text/glyph.hpp>
+#include <mbgl/text/bidi.hpp>
 
 namespace mbgl {
 
-using StyledText = std::pair<std::u16string, std::vector<uint8_t>>;
-    
 struct SectionOptions {
     SectionOptions(double scale_, FontStackHash fontStackHash_)
         : scale(scale_), fontStackHash(fontStackHash_)
