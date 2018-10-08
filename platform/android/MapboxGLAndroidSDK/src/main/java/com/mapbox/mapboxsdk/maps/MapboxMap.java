@@ -159,7 +159,7 @@ public final class MapboxMap {
   }
 
   /**
-   * Called when the hosting Activity/Fragment onDestroy()/onDestroyView() method is called.
+   * Called when the hosting Activity/Fragment clear()/onDestroyView() method is called.
    */
   void onDestroy() {
     locationComponent.onDestroy();
