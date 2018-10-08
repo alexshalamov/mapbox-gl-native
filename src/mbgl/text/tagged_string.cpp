@@ -13,20 +13,17 @@ void TaggedString::addSection(const std::u16string& sectionText, double scale, F
 
 void TaggedString::trim() {
     auto whiteSpace = boost::algorithm::is_any_of(u" \t\n\v\f\r");
-    std::size_t beginningWhitespace = 0;
-    for (std::size_t i = 0;
-         i < styledText.first.length() && whiteSpace(styledText.first.at(i));
-         i++) {
-        beginningWhitespace++;
+    std::size_t beginningWhitespace = styledText.first.find_first_not_of(u" \t\n\v\f\r");
+    if (beginningWhitespace == std::u16string::npos) {
+        // Entirely whitespace
+        styledText.first.clear();
+        styledText.second.clear();
+    } else {
+        std::size_t trailingWhitespace = styledText.first.find_last_not_of(u" \t\n\v\f\r") + 1;
+
+        styledText.first = styledText.first.substr(beginningWhitespace, trailingWhitespace - beginningWhitespace);
+        styledText.second = std::vector<uint8_t>(styledText.second.begin() + beginningWhitespace, styledText.second.begin() + trailingWhitespace);
     }
-    std::size_t trailingWhitespace = styledText.first.length();
-    for (int32_t i = static_cast<int32_t>(styledText.first.length()) - 1;
-         i >= 0 && std::size_t(i) >= beginningWhitespace && whiteSpace(styledText.first.at(i));
-         i--) {
-        trailingWhitespace--;
-    }
-    styledText.first = styledText.first.substr(beginningWhitespace, trailingWhitespace - beginningWhitespace);
-    styledText.second = std::vector<uint8_t>(styledText.second.begin() + beginningWhitespace, styledText.second.begin() + trailingWhitespace);
 }
 
 double TaggedString::getMaxScale() const {
