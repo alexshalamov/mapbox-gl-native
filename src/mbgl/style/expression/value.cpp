@@ -62,7 +62,9 @@ void writeJSON(rapidjson::Writer<rapidjson::StringBuffer>& writer, const Value& 
             assert(false);
         },
         [&] (const Formatted& f) {
-            // TODO format: not sure where the stringify logic is supposed to live
+            // `stringify` in turns calls ValueConverter::fromExpressionValue below
+            // Serialization strategy for Formatted objects is to return the constant
+            // expression that would generate them.
             mbgl::style::conversion::stringify(writer, f);
         },
         [&] (const std::vector<Value>& arr) {
@@ -144,8 +146,8 @@ mbgl::Value ValueConverter<mbgl::Value>::fromExpressionValue(const Value& value)
             return mbgl::Value();
         },
         [&](const Formatted& formatted)->mbgl::Value {
-            // TODO format: figure out right way to serialize this?
-            // Seems like it should be similar to the Formatted logic in stringify.hpp, can they be shared?
+            // Serialization strategy for Formatted objects is to return the constant
+            // expression that would generate them.
             std::vector<mbgl::Value> serialized;
             static std::string formatOperator("format");
             serialized.emplace_back(formatOperator);
@@ -154,7 +156,7 @@ mbgl::Value ValueConverter<mbgl::Value>::fromExpressionValue(const Value& value)
                 std::unordered_map<std::string, mbgl::Value> options;
                 
                 if (section.fontScale) {
-                    options["font-scale"] = *section.fontScale;
+                    options.emplace("font-scale", *section.fontScale);
                 }
                 
                 if (section.fontStack) {
@@ -162,7 +164,7 @@ mbgl::Value ValueConverter<mbgl::Value>::fromExpressionValue(const Value& value)
                     for (const auto& font : *section.fontStack) {
                         fontStack.emplace_back(font);
                     }
-                    options["text-font"] = std::vector<mbgl::Value>{ std::string("literal"), fontStack };
+                    options.emplace("text-font", std::vector<mbgl::Value>{ std::string("literal"), fontStack });
                 }
                 serialized.push_back(options);
             }
