@@ -148,10 +148,16 @@ ParseResult Coercion::parse(const Convertible& value, ParsingContext& ctx) {
     auto it = types.find(*toString(arrayMember(value, 0)));
     assert(it != types.end());
 
-    if ((it->second == type::Boolean || it->second == type::String) && length != 2) {
+    if ((it->second == type::Boolean || it->second == type::String || it->second == type::Formatted) && length != 2) {
         ctx.error("Expected one argument.");
         return ParseResult();
     }
+    
+    /**
+     * Special form for error-coalescing coercion expressions "to-number",
+     * "to-color".  Since these coercions can fail at runtime, they accept multiple
+     * arguments, only evaluating one at a time until one succeeds.
+     */
 
     std::vector<std::unique_ptr<Expression>> parsed;
     parsed.reserve(length - 1);

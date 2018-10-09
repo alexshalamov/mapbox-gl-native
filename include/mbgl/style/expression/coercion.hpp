@@ -10,11 +10,6 @@ namespace mbgl {
 namespace style {
 namespace expression {
 
-/**
- * Special form for error-coalescing coercion expressions "to-number",
- * "to-color".  Since these coercions can fail at runtime, they accept multiple
- * arguments, only evaluating one at a time until one succeeds.
- */
 class Coercion : public Expression  {
 public:
     Coercion(type::Type type_, std::vector<std::unique_ptr<Expression>> inputs_);
