@@ -120,10 +120,10 @@ mbgl::Value FormatExpression::serialize() const {
         serialized.push_back(section.text->serialize());
         std::unordered_map<std::string, mbgl::Value> options;
         if (section.fontScale) {
-            options["font-scale"] = (*section.fontScale)->serialize();
+            options.emplace("font-scale", (*section.fontScale)->serialize());
         }
         if (section.textFont) {
-            options["text-font"] = (*section.textFont)->serialize();
+            options.emplace("text-font", (*section.textFont)->serialize());
         }
         serialized.push_back(options);
     }
@@ -160,7 +160,6 @@ EvaluationResult FormatExpression::evaluate(const EvaluationContext& params) con
             }
             FontStack fontStack;
             for (const auto& value : textFontResult->get<mapbox::util::recursive_wrapper<std::vector<Value>>>().get()) {
-                // TODO format: is there an easier way to evaluate a fontStack?
                 fontStack.push_back(value.get<std::string>());
             }
             evaluatedTextFont = fontStack;
