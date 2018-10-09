@@ -14,6 +14,21 @@ struct SectionOptions {
     FontStackHash fontStackHash;
 };
 
+/**
+ * A TaggedString is the shaping-code counterpart of the Formatted type
+ * Whereas Formatted matches the logical structure of a 'format' expression,
+ * a TaggedString represents the same data at a per-character level so that
+ * character-rearranging operations (e.g. BiDi) preserve formatting.
+ * Text is represented as:
+ * - A string of characters
+ * - A matching array of indices, pointing to:
+ * - An array of SectionsOptions, representing the evaluated formatting
+ *    options of the original sections.
+ *
+ * Once the guts of a TaggedString have been re-arranged by BiDi, you can
+ * iterate over the contents in order, using getCharCodeAt and getSection
+ * to get the formatting options for each character in turn.
+ */
 struct TaggedString {
     TaggedString() = default;
 
