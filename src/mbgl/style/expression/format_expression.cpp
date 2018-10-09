@@ -158,11 +158,11 @@ EvaluationResult FormatExpression::evaluate(const EvaluationContext& params) con
             if (!textFontResult) {
                 return textFontResult.error();
             }
-            FontStack fontStack;
-            for (const auto& value : textFontResult->get<mapbox::util::recursive_wrapper<std::vector<Value>>>().get()) {
-                fontStack.push_back(value.get<std::string>());
+            auto textFontValue = ValueConverter<std::vector<std::string>>::fromExpressionValue(*textFontResult);
+            if (!textFontValue) {
+                return EvaluationError { "Format text-font option must evaluate to an array of strings" };
             }
-            evaluatedTextFont = fontStack;
+            evaluatedTextFont = *textFontValue;
         }
         evaluatedSections.emplace_back(*evaluatedText, evaluatedFontScale, evaluatedTextFont);
     }
